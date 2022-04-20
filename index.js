@@ -4,21 +4,34 @@ import cors from 'cors';
 const app = express();
 app.use(cors());
 
+app.listen(4100, () => {
+
+    console.log('Server running on port 4100');
+});
+
 app.get('/holidays', (req, res) => {
 
     res.send(getHolidays());
 });
 
-app.get('/is-today-holiday', (req, res) => {
+app.get('/holidays/:month', (req, res) => {
 
-    const today = new Date();
-    const format = today.toLocaleDateString();
+    const { month } = req.params; // req.params.month
+    const holidayMonth = getHolidays().filter(holiday => {
 
-    const holiday = getHolidays().find(holi => holi.date === format);
-    holiday ? res.send(`Yes, today is holiday ${holiday.name}`) : res.send(`No, today is not holiday`);
+        const getMonth = holiday.date.split("/")[0];
+        return getMonth === month ? true : false;
+    });
+
+    res.send(holidayMonth);
 });
 
-app.listen(4100);
+app.get('/is-today-holiday', (req, res) => {
+
+    const today = new Date().toLocaleDateString();
+    const holiday = getHolidays().find(holi => holi.date === today);
+    holiday ? res.send(`Yes, today is holiday ${holiday.name}`) : res.send(`No, today is not holiday`);
+});
 
 function getHolidays() {
 
@@ -36,5 +49,6 @@ function getHolidays() {
         { date: "11/15/2022", name: "Proclamação da República" },
         { date: "12/25/2022", name: "Natal" }
     ];
+    
     return holidays;
 }
