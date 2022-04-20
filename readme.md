@@ -1,1 +1,1 @@
-# first commit
+# in this activity, a simple local server was made to return holidays as a get request
